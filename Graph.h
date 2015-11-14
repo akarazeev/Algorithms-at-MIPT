@@ -816,6 +816,7 @@ void graph<T, S, R>::BellmanFord(int x, std::vector<int>& a) {
     }
     
     int z = 0;
+    z += 1;
 //    std::vector<int> d(n_);
 //    for (int i = 0; i < n_; ++i) {
 //        d[i] = INF;
