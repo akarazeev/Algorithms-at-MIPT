@@ -1043,9 +1043,12 @@ void graph<T, S, R>::Kruscal() {
         }
     }
     /* Output */
+    S res = 0;
     for (auto it : answer) {
-        std::cout << std::get<0>(it).first << ' ' << std::get<0>(it).second << ' ' << std::get<1>(it) << std::endl;
+//        std::cout << std::get<0>(it).first << ' ' << std::get<0>(it).second << ' ' << std::get<1>(it) << std::endl;
+        res += std::get<1>(it);
     }
+    std::cout << res;
 }
 
 template <typename T, typename S, bool R>

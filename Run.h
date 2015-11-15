@@ -9,19 +9,30 @@
 #ifndef Run_h
 #define Run_h
 
+#define READ 0
+
 void Run() {
     std::ifstream fin("test.txt");
     // Amount of tests
     int quant;
-    fin >> quant;
+    if (READ) {
+        fin >> quant;
+    } else {
+        std::cin >> quant;
+    }
+    assert(quant != 0);
     for (int i = 0; i < quant; ++i) {
-        std::cout << "Test #" << i+1 << std::endl;
+//        std::cout << "Test #" << i+1 << std::endl;
         /*
          w - id of algorithm
          n - amount of vertexes
          */
         int w;
-        fin >> w;
+        if (READ) {
+            fin >> w;
+        } else {
+            std::cin >> w;
+        }
         switch (w) {
             case 0: {
                 int n;
@@ -85,14 +96,23 @@ void Run() {
             }
             case 7: {
                 int n;
-                fin >> n;
+                if (READ) {
+                    fin >> n;
+                } else {
+                    std::cin >> n;
+                }
+                assert(n != 0);
                 graph<int, int, 0> g(n);
-                fin >> g;
+                if (READ) {
+                    fin >> g;
+                } else {
+                    std::cin >> g;
+                }
                 g.Kruscal();
                 break;
             }
         }
-        std::cout << std::endl;
+//        std::cout << std::endl;
     }
 }
 
