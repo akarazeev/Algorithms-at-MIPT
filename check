@@ -1,2 +1,2 @@
 #python check.py ./run tests
-python check.py ./a.out tests
+./run ; python check.py ./a.out tests

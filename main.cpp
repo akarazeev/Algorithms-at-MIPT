@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <functional>
+#include "Aho-Corasick.h"
 #include "Graph.h"
 #include "Puzzle.h"
 //#include "BinomialHeap.h"

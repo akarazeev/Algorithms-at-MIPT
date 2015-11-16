@@ -28,42 +28,46 @@ if __name__ == '__main__':
 
     dirname = sys.argv[2]
 
-    files = [join(dirname,f) for f in listdir(dirname) if isfile(join(dirname, f))]
+    dir_numb = {7, 13}
 
-    tests = [join(dirname,'7','input',f) for f in listdir(join(dirname,'7','input')) if isfile(join(dirname,'7', 'input', f))]
-    tests = sorted(tests, cmp=numeric_compare)
+    for i in dir_numb:
+        print bcolors.UNDERLINE + 'Algoritm #' + str(i) + bcolors.ENDC
+        files = [join(dirname,f) for f in listdir(dirname) if isfile(join(dirname, f))]
 
-    answers = [join(dirname,'7','output',f) for f in listdir(join(dirname,'7','output')) if isfile(join(dirname,'7', 'output', f))]
-    answers = sorted(answers, cmp=numeric_compare)
-    
-    if len(answers) == 0 or len(tests) == 0:
-	   print bcolors.FAIL + 'Path to tests is not okay' + bcolors.ENDC
+        tests = [join(dirname,str(i),'input',f) for f in listdir(join(dirname,str(i),'input')) if isfile(join(dirname,str(i), 'input', f))]
+        tests = sorted(tests, cmp=numeric_compare)
 
-    if not len(answers) == len(tests):
-        print bcolors.FAIL + 'Tests directory is not okay' + bcolors.ENDC
+        answers = [join(dirname,str(i),'output',f) for f in listdir(join(dirname,str(i),'output')) if isfile(join(dirname,str(i), 'output', f))]
+        answers = sorted(answers, cmp=numeric_compare)
+        
+        if len(answers) == 0 or len(tests) == 0:
+           print bcolors.FAIL + 'Path to tests is not okay' + bcolors.ENDC
 
-    target = sys.argv[1]
+        if not len(answers) == len(tests):
+            print bcolors.FAIL + 'Tests directory is not okay' + bcolors.ENDC
 
-    tests_qty = len(tests)
+        target = sys.argv[1]
 
-    for f in tests:
+        tests_qty = len(tests)
 
-        test = open(f).read()
-        answer = open(answers[tests.index(f)]).read()
+        for f in tests:
 
-        instance = Popen(target, stdin = PIPE, stdout = PIPE, bufsize = 1)
-        instance.stdin.write(test + '\n')
-        instance_answer = instance.stdout.read()
+            test = open(f).read()
+            answer = open(answers[tests.index(f)]).read()
 
-        if instance_answer == answer:
-            print '[' + bcolors.OKGREEN + 'PASSED' + bcolors.ENDC + ']' + ' Test #' + str(tests.index(f) + 1)
-            tests_qty -= 1
-        else:
-            print '[' + bcolors.FAIL + 'FAILED' + bcolors.ENDC + ']' + ' Test #' + str(tests.index(f) + 1)
-            print '---------------------------------------'
-            print 'Test: ' + test
-            print 'Expect: ' + answer
-            print 'Output: ' + instance_answer[:-1]
-            print '---------------------------------------'
+            instance = Popen(target, stdin = PIPE, stdout = PIPE, bufsize = 1)
+            instance.stdin.write(test + '\n')
+            instance_answer = instance.stdout.read()
 
-    print str(len(tests) - tests_qty) + '/' + str(len(tests))
+            if instance_answer == answer:
+                print '[' + bcolors.OKGREEN + 'PASSED' + bcolors.ENDC + ']' + ' Test #' + str(tests.index(f) + 1)
+                tests_qty -= 1
+            else:
+                print '[' + bcolors.FAIL + 'FAILED' + bcolors.ENDC + ']' + ' Test #' + str(tests.index(f) + 1)
+                print '---------------------------------------'
+                print 'Test: ' + test
+                print 'Expect: ' + answer
+                print 'Output: ' + instance_answer[:-1]
+                print '---------------------------------------'
+
+        print str(len(tests) - tests_qty) + '/' + str(len(tests))

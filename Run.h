@@ -111,6 +111,22 @@ void Run() {
                 g.Kruscal();
                 break;
             }
+            case 13: {
+                AhoCorasick a(255, 30);
+                int amount;
+                std::cin >> amount;
+                
+                std::string s;
+                for (int i = 0; i < amount; ++i) {
+                    std::cin >> s;
+                    a.add_string(s);
+                }
+                
+                std::cin >> s;
+                int res = a.count_entry(s);
+                std::cout << res;
+                break;
+            }
         }
 //        std::cout << std::endl;
     }

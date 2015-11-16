@@ -1,2 +1,2 @@
 #!/bin/sh
-g++ -std=c++11 -Wc++11-extensions main.cpp
+g++ -std=c++14 -Wc++14-extensions main.cpp
