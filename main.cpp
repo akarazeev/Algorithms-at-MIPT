@@ -10,12 +10,12 @@
 #include <fstream>
 #include <functional>
 #include "Aho-Corasick.h"
+#include "MaxFlow.hpp"
 #include "Graph.h"
 #include "Puzzle.h"
-//#include "BinomialHeap.h"
 #include "FibonacciHeap.h"
-#include "MaxFlow.hpp"
 #include "Run.h"
+//#include "BinomialHeap.h"
 
 int main() {
     Run();

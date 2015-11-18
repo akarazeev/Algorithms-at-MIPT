@@ -9,10 +9,11 @@
 #ifndef Run_h
 #define Run_h
 
+#include "MaxFlow.hpp"
+
 #define READ 0
 
 void Run() {
-    std::ifstream fin("test.txt");
     // Amount of tests
     int quant = 1;
     assert(quant != 0);
@@ -22,43 +23,41 @@ void Run() {
          n - amount of vertexes
          */
         int w;
-        if (READ) {
-            fin >> w;
-        } else {
-            std::cin >> w;
-        }
+        std::cin >> w;
+        
+        
         switch (w) {
             case 0: {
                 int n;
-                fin >> n;
+                std::cin >> n;
                 graph<int, int, 1> g(n);
-                fin >> g;
+                std::cin >> g;
                 g.Tarjan();
                 break;
             }
             case 1: {
                 int n;
-                fin >> n;
+                std::cin >> n;
                 graph<int, int, 1> g(n);
-                fin >> g;
+                std::cin >> g;
                 g.Kosaraju();
                 break;
             }
             case 2: {
                 int n;
-                fin >> n;
+                std::cin >> n;
                 graph<int, int, 1> g(n);
-                fin >> g;
+                std::cin >> g;
                 int src;
-                fin >> src;
+                std::cin >> src;
                 g.Dijkstra(src);
                 break;
             }
             case 3: {
                 int n;
-                fin >> n;
+                std::cin >> n;
                 graph<int, int, 1> g(n);
-                fin >> g;
+                std::cin >> g;
                 std::vector<int> table;
                 g.BellmanFord(3, table);
                 for (int it : table) {
@@ -68,40 +67,32 @@ void Run() {
             }
             case 4: {
                 int n;
-                fin >> n;
+                std::cin >> n;
                 graph<int, int, 1> g(n);
-                fin >> g;
+                std::cin >> g;
                 g.FloydWarshall();
                 break;
             }
             case 5: {
                 Puzzle p;
-                fin >> p;
+                std::cin >> p;
                 p.Solve();
                 break;
             }
             case 6: {
                 int n;
-                fin >> n;
+                std::cin >> n;
                 graph<int, int, 0> g(n);
-                fin >> g;
+                std::cin >> g;
                 g.Prim();
                 break;
             }
             case 7: {
                 int n;
-                if (READ) {
-                    fin >> n;
-                } else {
-                    std::cin >> n;
-                }
+                std::cin >> n;
                 assert(n != 0);
                 graph<int, int, 0> g(n);
-                if (READ) {
-                    fin >> g;
-                } else {
-                    std::cin >> g;
-                }
+                std::cin >> g;
                 g.Kruscal();
                 break;
             }
@@ -136,7 +127,6 @@ void Run() {
                 break;
             }
         }
-//        std::cout << std::endl;
     }
 }
 

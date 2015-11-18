@@ -31,7 +31,7 @@ if __name__ == '__main__':
     dir_numb = {7, 13, 14}
 
     for i in dir_numb:
-        print bcolors.UNDERLINE + 'Algoritm #' + str(i) + bcolors.ENDC
+        print bcolors.UNDERLINE + 'Algorithm #' + str(i) + bcolors.ENDC
         files = [join(dirname,f) for f in listdir(dirname) if isfile(join(dirname, f))]
 
         tests = [join(dirname,str(i),'input',f) for f in listdir(join(dirname,str(i),'input')) if isfile(join(dirname,str(i), 'input', f))]
@@ -56,7 +56,7 @@ if __name__ == '__main__':
             answer = open(answers[tests.index(f)]).read()
 
             instance = Popen(target, stdin = PIPE, stdout = PIPE, bufsize = 1)
-            instance.stdin.write(test + '\n')
+            instance.stdin.write(str(i) + ' ' + test + '\n')
             instance_answer = instance.stdout.read()
 
             if instance_answer == answer:

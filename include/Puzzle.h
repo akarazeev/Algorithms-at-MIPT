@@ -18,6 +18,7 @@
 #include <fstream>
 #include <assert.h>
 #include <math.h>
+#include <iostream>
 
 class Puzzle {
 public:
@@ -36,7 +37,7 @@ public:
     friend std::vector<Puzzle> ReconstructPath(std::map<Puzzle, Puzzle, D>& came_from, Puzzle goal);
     
     Puzzle& operator=(const Puzzle& p);
-    friend std::ifstream& operator>>(std::ifstream& stream, Puzzle& p);
+    friend std::istream& operator>>(std::istream& stream, Puzzle& p);
     friend std::ostream& operator<<(std::ostream& stream, Puzzle p);
 private:
     /* Dimension of Puzzle */
@@ -230,7 +231,7 @@ Puzzle& Puzzle::operator=(const Puzzle& p) {
     return *this;
 }
 
-std::ifstream& operator>>(std::ifstream& stream, Puzzle& p) {
+std::istream& operator>>(std::istream& stream, Puzzle& p) {
     p.grid_.clear();
     for (int i = 0; i < p.dim_*p.dim_; ++i) {
         int x;
