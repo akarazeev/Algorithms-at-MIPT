@@ -13,8 +13,9 @@
 #include "Graph.h"
 #include "Puzzle.h"
 //#include "BinomialHeap.h"
-#include "Run.h"
 #include "FibonacciHeap.h"
+#include "MaxFlow.hpp"
+#include "Run.h"
 
 int main() {
     Run();
