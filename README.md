@@ -11,6 +11,6 @@
 		* n - number of vertexes
 		* t - target
 		* s - source
-		* reading of graph
+		* reading of graph: q - number of edges and then 4 numbers on every line - from, to, capability, cost
 * Алгоритмы на строках
 	* Ахо-Корасик
