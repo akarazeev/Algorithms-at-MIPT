@@ -9,10 +9,6 @@
 #ifndef Run_h
 #define Run_h
 
-#include "MaxFlow.hpp"
-
-#define READ 0
-
 void Run() {
     // Amount of tests
     int quant = 1;
@@ -24,8 +20,6 @@ void Run() {
          */
         int w;
         std::cin >> w;
-        
-        
         switch (w) {
             case 0: {
                 int n;

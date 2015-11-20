@@ -95,7 +95,7 @@ std::pair<double, double> MaxFlow::Flow(int s, int t, double max_flow) {
         for (int i = 0; i < psize-1; ++i) {
             assert(psize-i-1 >= 0);
             assert(psize-i-2 >= 0);
-            std::cout << psize-i-2 << std::endl;
+            
             int from = path[psize-i-1];
             int to = path[psize-i-2];
             
