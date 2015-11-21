@@ -28,18 +28,20 @@ if __name__ == '__main__':
 
     dirname = sys.argv[2]
 
-    dir_numb = {7, 13, 14}
+    dir_numb = {7, 13, 9, 4, 2, 8}
 
     for i in dir_numb:
         print bcolors.UNDERLINE + 'Algorithm #' + str(i) + bcolors.ENDC
         files = [join(dirname,f) for f in listdir(dirname) if isfile(join(dirname, f))]
 
-        tests = [join(dirname,str(i),'input',f) for f in listdir(join(dirname,str(i),'input')) if isfile(join(dirname,str(i), 'input', f))]
+        tests = [join(dirname,str(i),'input',f) for f in listdir(join(dirname,str(i),'input')) \
+                                                    if isfile(join(dirname, str(i), 'input', f)) and f[0] == 't']
         tests = sorted(tests, cmp=numeric_compare)
 
-        answers = [join(dirname,str(i),'output',f) for f in listdir(join(dirname,str(i),'output')) if isfile(join(dirname,str(i), 'output', f))]
+        answers = [join(dirname,str(i),'output',f) for f in listdir(join(dirname,str(i),'output')) \
+                                                    if isfile(join(dirname, str(i), 'output', f)) and f[0] == 'a']
         answers = sorted(answers, cmp=numeric_compare)
-        
+
         if len(answers) == 0 or len(tests) == 0:
            print bcolors.FAIL + 'Path to tests is not okay' + bcolors.ENDC
 

@@ -9,6 +9,15 @@
 #ifndef Run_h
 #define Run_h
 
+#include <fstream>
+#include <functional>
+#include "Aho-Corasick.h"
+#include "MaxFlow.hpp"
+#include "Graph.h"
+#include "Puzzle.h"
+#include "FibonacciHeap.h"
+#include "Fenwick.h"
+
 void Run() {
     // Amount of tests
     int quant = 1;
@@ -73,14 +82,6 @@ void Run() {
                 p.Solve();
                 break;
             }
-            case 6: {
-                int n;
-                std::cin >> n;
-                graph<int, int, 0> g(n);
-                std::cin >> g;
-                g.Prim();
-                break;
-            }
             case 7: {
                 int n;
                 std::cin >> n;
@@ -88,6 +89,14 @@ void Run() {
                 graph<int, int, 0> g(n);
                 std::cin >> g;
                 g.Kruscal();
+                break;
+            }
+            case 8: {
+                int n;
+                std::cin >> n;
+                graph<int, int, 0> g(n);
+                std::cin >> g;
+                g.Prim();
                 break;
             }
             case 13: {
@@ -106,7 +115,7 @@ void Run() {
                 std::cout << res;
                 break;
             }
-            case 14: {
+            case 9: {
                 int n;
                 std::cin >> n;
                 MaxFlow m(n);
@@ -118,6 +127,10 @@ void Run() {
                 std::cin >> m;
                 std::pair<double, double> ans = m.Flow(t, s, Inf);
                 std::cout << ans.first << ' ' << ans.second;
+                break;
+            }
+            case 10: {
+                //TODO: Do it!
                 break;
             }
         }

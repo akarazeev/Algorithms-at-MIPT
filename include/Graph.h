@@ -839,8 +839,8 @@ void graph<T, S, R>::BellmanFord(int x, std::vector<int>& a) {
 
 template <typename T, typename S, bool R>
 void graph<T, S, R>::FloydWarshall() {
-    std::vector<int> temp(n_, INF);
-    std::vector<std::vector<int> > dist(n_, temp);
+    std::vector<S> temp(n_, INF);
+    std::vector<std::vector<S> > dist(n_, temp);
     for (int i = 0; i < n_; ++i) {
         if (data_[i].exist_){
             dist[i][i] = 0;
@@ -863,23 +863,23 @@ void graph<T, S, R>::FloydWarshall() {
         }
     }
     // Output
-    std::cout << "  ";
+    std::vector<S> tmp;
     for (int i = 0; i < n_; ++i) {
         if (data_[i].exist_) {
-            std::cout << i << ' ';
-        }
-    }
-    std::cout << std::endl;
-    for (int i = 0; i < n_; ++i) {
-        if (data_[i].exist_) {
-            std::cout << i << ' ';
+            tmp.clear();
             for (int j = 0; j < n_; ++j) {
                 if (data_[j].exist_) {
                     if (dist[i][j] == INF) {
-                        std::cout << -1 << ' ';
+                        tmp.push_back(-1);
                     } else {
-                        std::cout << dist[i][j] << ' ';
+                        tmp.push_back(dist[i][j]);
                     }
+                }
+            }
+            for (int j = 0; j < tmp.size(); ++j) {
+                std::cout << tmp[j];
+                if (j != tmp.size()-1) {
+                    std::cout << ' ';
                 }
             }
             std::cout << std::endl;
@@ -915,11 +915,17 @@ void graph<T, S, R>::Dijkstra(int x) {
         }
     }
     std::cout << real_dist.size() << std::endl;
-    for (auto it : real_dist) {
-        if (it == INF) {
-            std::cout << -1 << std::endl;
+    for (int i = 0; i < real_dist.size(); ++i) {
+        if (real_dist[i] == INF) {
+            std::cout << -1;
+            if (i != real_dist.size()-1) {
+                std::cout << std::endl;
+            }
         } else {
-            std::cout << it << std::endl;
+            std::cout << real_dist[i];
+            if (i != real_dist.size()-1) {
+                std::cout << std::endl;
+            }
         }
     }
 }
@@ -963,9 +969,12 @@ void graph<T, S, R>::Prim() {
         }
     }
     /* Output */
+    S res = 0;
     for (auto it : answer) {
-        std::cout << std::get<0>(it).first << ' ' << std::get<0>(it).second << ' ' << std::get<1>(it) << std::endl;
+        //        std::cout << std::get<0>(it).first << ' ' << std::get<0>(it).second << ' ' << std::get<1>(it) << std::endl;
+        res += std::get<1>(it);
     }
+    std::cout << res;
 }
 
 template <typename T>

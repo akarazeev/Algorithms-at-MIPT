@@ -1,24 +1,32 @@
 # Tasks of Third Semester #
 
 ###  Graph Algorithms
-* **Tarjan** #0, **Kosaraju** #1, **Floyd-Warshall** #4, **Prim** #6, **Kruscal** #7
-    * n - number of vertexes
+* **Tarjan** #0
+* **Kosaraju** #1
+* **Bellman-Ford** #3
+* **Floyd-Warshall** #4
+* **Kruscal** #7
+* **Prim** #8
+    * **n** - number of vertexes
     * reading of graph:
-        * count - number of edges
-        * 3 numbers on every line - from, to, weight
+        * **count** - number of edges
+        * 3 numbers on every line - **from**, **to**, **weight**
 * **Dijkstra** #2
     * reading of graph:
-        * count - number of edges
-        * 3 numbers on every line - from, to, weight
-        * src - source vertex
+        * **count** - number of edges
+        * 3 numbers on every line - **from**, **to**, **weight**
+        * **src** - source vertex
 * **Puzzle** #5
     * 5 lines with 5 numbers of tiles
     * 0 -- position of missing tile
 
+### RMQ
+* **Fenwick's Tree** #10
+
 ### Flows
-* **Max flow -- min cost** #14
-	* n - number of vertexes
-	* t - target
+* **Max flow - min cost** #9
+    * n - number of vertexes
+    * t - target
 	* s - source
 	* reading of graph:
 	    * q - number of edges

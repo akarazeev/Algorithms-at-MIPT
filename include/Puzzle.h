@@ -65,7 +65,7 @@ bool Puzzle::IsSolv() const {
             }
         }
     }
-    return ((res % 2) == 0 && (dim_-(c_/dim_)) % 2 == 1) || ((res % 2) == 1 && (dim_-(c_/dim_)) % 2 == 0);;
+    return ((res % 2) == 0 && (dim_-(c_/dim_)) % 2 == 1) || ((res % 2) == 1 && (dim_-(c_/dim_)) % 2 == 0);
 }
 
 int Puzzle::CalcManh() const {
@@ -112,7 +112,12 @@ int Puzzle::CalcEdge() const {
 }
 
 template <typename A, typename B, typename C, typename D>
-void MakeMoves(Puzzle& current, std::priority_queue<std::pair<Puzzle, int>, std::vector<std::pair<Puzzle, int> >, C>& seq, std::set<Puzzle, A>& openset, std::set<Puzzle, A>& closedset, std::map<Puzzle, int, B>& dist, std::map<Puzzle, Puzzle, D>& came_from) {
+void MakeMoves(Puzzle& current,
+               std::priority_queue<std::pair<Puzzle, int>, std::vector<std::pair<Puzzle, int> >, C>& seq,
+               std::set<Puzzle, A>& openset,
+               std::set<Puzzle, A>& closedset,
+               std::map<Puzzle, int, B>& dist,
+               std::map<Puzzle, Puzzle, D>& came_from) {
     for (int i = 0; i < 4; ++i) {
         Puzzle tmp = current;
         if (i == 0 && current.c_/current.dim_ > 0) {
@@ -192,10 +197,6 @@ int Puzzle::Solve() {
         seq.push({*this, this->CalcEdge() + this->CalcManh() + dist[*this]});
         
         while (seq.size() != 0) {
-            //            trace(seq.top().second)
-            //            trace(seq.top().first)
-            //            trace(' ')
-            
             Puzzle current = seq.top().first;
             seq.pop();
             closedset.insert(current);
