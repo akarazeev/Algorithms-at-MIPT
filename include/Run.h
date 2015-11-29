@@ -61,7 +61,9 @@ void Run() {
                 std::cin >> n;
                 graph<int, int, 1> g(n);
                 std::cin >> g;
-                g.BellmanFord(3);
+                int src;
+                std::cin >> src;
+                g.BellmanFord(src);
                 break;
             }
             case 4: {

@@ -817,12 +817,15 @@ void graph<T, S, R>::BellmanFord(int x) {
     }
     // Output
     std::vector<std::string> answer;
+    int real_size = 0;
     for (int i = 0; i < d.size(); ++i) {
         if (data_[i].exist_) {
             if (d[i] == INF) {
                 answer.push_back(std::to_string(-1));
+                ++real_size;
             } else {
                 answer.push_back(std::to_string(d[i]));
+                ++real_size;
             }
             if (i != d.size()-1) {
                 answer.push_back("\n");
@@ -830,6 +833,7 @@ void graph<T, S, R>::BellmanFord(int x) {
         }
     }
     answer.pop_back();
+    std::cout << real_size << std::endl;
     for (auto it : answer) {
         if (it == "\n") {
             std::cout << std::endl;

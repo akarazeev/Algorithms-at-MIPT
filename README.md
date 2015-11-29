@@ -3,7 +3,6 @@
 ###  Graph Algorithms
 * **Tarjan** #0
 * **Kosaraju** #1
-* **Bellman-Ford** #3
 * **Floyd-Warshall** #4
 * **Kruscal** #7
 * **Prim** #8
@@ -12,6 +11,7 @@
         * **count** - number of edges
         * 3 numbers on every line - **from**, **to**, **weight**
 * **Dijkstra** #2
+* **Bellman-Ford** #3
     * reading of graph:
         * **count** - number of edges
         * 3 numbers on every line - **from**, **to**, **weight**
