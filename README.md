@@ -18,7 +18,7 @@
         * **src** - source vertex
 * **Puzzle** #5
     * 5 lines with 5 numbers of tiles
-    * 0 -- position of missing tile
+    * 0 - position of missing tile
 
 ### RMQ
 * **Fenwick's Tree** #10

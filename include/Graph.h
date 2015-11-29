@@ -58,8 +58,8 @@ public:
     graph(int n);
     graph(const graph<T, S, R>& g);
     
-    void Flip();
     graph<T, S, R> Flipped();
+    void Flip();
     int DataSize();
     int NumbOfVert();
     
@@ -93,7 +93,7 @@ public:
     void StrongConnect(int x, int& step, std::stack<int>& stk, std::vector<std::set<T> >& scc);
     void Tarjan();
     // x - start searching from this vertex
-    void BellmanFord(int x, std::vector<int>& a);
+    void BellmanFord(int x);
     void FloydWarshall();
     void Dijkstra(int x);
     
@@ -159,7 +159,9 @@ std::ostream& operator<<(std::ostream& stream, graph<T, S, R>& g);
 //#pragma mark > Class BFS Iterator
 //
 //template <typename T, typename S, bool R>
-//graph<T, S, R>::bfs_const_iterator::bfs_const_iterator(std::vector<T>& bfs_vertex, typename std::vector<T>::const_iterator it): bfs_vertex_(bfs_vertex), it_(it) {
+//graph<T, S, R>::bfs_const_iterator::bfs_const_iterator(std::vector<T>& bfs_vertex,
+//                                                      typename std::vector<T>::const_iterator it): bfs_vertex_(bfs_vertex),
+//                                                                                                   it_(it) {
 //
 //}
 //
@@ -224,7 +226,8 @@ graph<T, S, R>::graph(int n): n_(n), oriented_(R), data_(std::vector<vertex<T, S
 }
 
 template <typename T, typename S, bool R>
-graph<T, S, R>::graph(const graph<T, S, R>& g): data_(g.data_), n_(g.n_), oriented_(g.oriented_), existed_(g.existed_), dependence_(g.dependence_) {
+graph<T, S, R>::graph(const graph<T, S, R>& g): data_(g.data_), n_(g.n_), oriented_(g.oriented_),
+                                                existed_(g.existed_), dependence_(g.dependence_) {
     
 }
 
@@ -778,63 +781,62 @@ void graph<T, S, R>::Tarjan() {
         }
     });
     for (int i = 0; i < scc.size(); ++i) {
+        int j = 0;
         for (auto it : scc[i]) {
-            std::cout << it << ' ';
+            std::cout << it;
+            if (j != scc[i].size()-1) {
+                std::cout << ' ';
+            }
+            ++j;
         }
-        std::cout << std::endl;
+        if (i != scc.size()-1) {
+            std::cout << std::endl;
+        }
     }
 }
 
 
 //FIXME: Doesn't work correctly
 template <typename T, typename S, bool R>
-void graph<T, S, R>::BellmanFord(int x, std::vector<int>& a) {
-    std::vector<int> tmp(n_);
-    std::vector<std::vector<int> > res;
-    std::vector<std::vector<int> > p;
+void graph<T, S, R>::BellmanFord(int x) {
+    std::vector<int> d(n_);
     for (int i = 0; i < n_; ++i) {
-        res.push_back(tmp);
-        p.push_back(tmp);
+        d[i] = INF;
     }
-    for (int i = 0; i < n_; ++i) {
-        for (int j = 0; j < n_-1; ++j) {
-            res[i][j] = INF;
-        }
-    }
-    res[x][0] = 0;
-    for (int i = 1; i < n_-1; ++i) {
+    d[x] = 0;
+    for (int i = 0; i < n_-1; ++i) {
         for (int j = 0; j < n_; ++j) {
             if (data_[j].exist_) {
                 for (auto it : data_[j].adj_) {
-                    if (res[it.first][i] > res[j][i-1] + it.second) {
-                        res[it.first][i] = res[j][i-1] + it.second;
-                        p[it.first][i] = j;
+                    if (d[it.first] > d[j] + it.second) {
+                        d[it.first] = d[j] + it.second;
                     }
                 }
             }
         }
     }
-    
-    int z = 0;
-    z += 1;
-//    std::vector<int> d(n_);
-//    for (int i = 0; i < n_; ++i) {
-//        d[i] = INF;
-//    }
-//    d[x] = 0;
-//    for (int i = 0; i < n_-1; ++i) {
-//        for (int j = 0; j < n_; ++j) {
-//            if (data_[j].exist_) {
-//                for (auto it : data_[j].adj_) {
-//                    if (d[it.first] > d[j] + it.second) {
-//                        d[it.first] = d[j] + it.second;
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    a = d;
-    
+    // Output
+    std::vector<std::string> answer;
+    for (int i = 0; i < d.size(); ++i) {
+        if (data_[i].exist_) {
+            if (d[i] == INF) {
+                answer.push_back(std::to_string(-1));
+            } else {
+                answer.push_back(std::to_string(d[i]));
+            }
+            if (i != d.size()-1) {
+                answer.push_back("\n");
+            }
+        }
+    }
+    answer.pop_back();
+    for (auto it : answer) {
+        if (it == "\n") {
+            std::cout << std::endl;
+        } else {
+            std::cout << it;
+        }
+    }
 }
 
 template <typename T, typename S, bool R>
@@ -863,26 +865,31 @@ void graph<T, S, R>::FloydWarshall() {
         }
     }
     // Output
-    std::vector<S> tmp;
+    std::vector<std::string> answer;
     for (int i = 0; i < n_; ++i) {
         if (data_[i].exist_) {
-            tmp.clear();
             for (int j = 0; j < n_; ++j) {
                 if (data_[j].exist_) {
                     if (dist[i][j] == INF) {
-                        tmp.push_back(-1);
+                        answer.push_back(std::to_string(-1));
                     } else {
-                        tmp.push_back(dist[i][j]);
+                        answer.push_back(std::to_string(dist[i][j]));
                     }
+                    answer.push_back(" ");
                 }
             }
-            for (int j = 0; j < tmp.size(); ++j) {
-                std::cout << tmp[j];
-                if (j != tmp.size()-1) {
-                    std::cout << ' ';
-                }
+            if (answer[answer.size()-1] == " ") {
+                answer.pop_back();
             }
+            answer.push_back("\n");
+        }
+    }
+    answer.pop_back();
+    for (auto it : answer) {
+        if (it == "\n") {
             std::cout << std::endl;
+        } else {
+            std::cout << it;
         }
     }
 }

@@ -11,11 +11,11 @@
 
 #include <fstream>
 #include <functional>
+#include "BinomialHeap.h"
 #include "Aho-Corasick.h"
 #include "MaxFlow.hpp"
 #include "Graph.h"
 #include "Puzzle.h"
-#include "FibonacciHeap.h"
 #include "Fenwick.h"
 
 void Run() {
@@ -61,11 +61,7 @@ void Run() {
                 std::cin >> n;
                 graph<int, int, 1> g(n);
                 std::cin >> g;
-                std::vector<int> table;
-                g.BellmanFord(3, table);
-                for (int it : table) {
-                    trace(it);
-                }
+                g.BellmanFord(3);
                 break;
             }
             case 4: {

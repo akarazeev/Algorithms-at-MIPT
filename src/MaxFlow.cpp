@@ -8,7 +8,8 @@
 
 #include "MaxFlow.hpp"
 
-MaxFlow::MaxFlow(int n): data_(std::vector<std::vector<std::pair<double, double> > > (n, std::vector<std::pair<double, double> > (n, std::pair<double, double> ()))) {
+MaxFlow::MaxFlow(int n): data_(std::vector<std::vector<std::pair<double, double> > > (n,
+                                std::vector<std::pair<double, double> > (n,std::pair<double, double> ()))) {
     
 }
 
@@ -37,7 +38,9 @@ void MaxFlow::BellmanFord(std::vector<double>& dist, int s) {
     }
 }
 
-void MaxFlow::GetPath(std::vector<std::vector<std::pair<double, double> > >& flow, std::vector<int>& dist, std::vector<int>& path, double& df, int s, int t) {
+void MaxFlow::GetPath(std::vector<std::vector<std::pair<double, double> > >& flow,
+                      std::vector<int>& dist, std::vector<int>& path,
+                      double& df, int s, int t) {
     dist = std::vector<int> (this->Size(), Inf);
     std::vector<int> pred(this->Size(), Inf);
     dist[s] = 0;
@@ -46,7 +49,8 @@ void MaxFlow::GetPath(std::vector<std::vector<std::pair<double, double> > >& flo
         for (int v = 0; v < this->Size(); ++v) {
             for (int u = 0; u < this->Size(); ++u) {
                 static std::pair<double, double> tmp (0, 0);
-                if (data_[u][v] != tmp && flow[u][v].second < data_[u][v].first && dist[v] > dist[u] + data_[u][v].second) {
+                if (data_[u][v] != tmp && flow[u][v].second < data_[u][v].first &&
+                    dist[v] > dist[u] + data_[u][v].second) {
                     dist[v] = dist[u] + data_[u][v].second;
                     pred[v] = u;
                 }

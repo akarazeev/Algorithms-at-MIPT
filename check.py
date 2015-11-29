@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
     dirname = sys.argv[2]
 
-    dir_numb = {7, 13, 9, 4, 2, 8}
+    dir_numb = {0, 7, 13, 9, 3, 4, 2, 8}
 
     for i in dir_numb:
         print bcolors.UNDERLINE + 'Algorithm #' + str(i) + bcolors.ENDC
@@ -69,7 +69,7 @@ if __name__ == '__main__':
                 print '---------------------------------------'
                 print 'Test: ' + test
                 print 'Expect: ' + answer
-                print 'Output: ' + instance_answer[:-1]
+                print 'Output: ' + instance_answer
                 print '---------------------------------------'
 
         print str(len(tests) - tests_qty) + '/' + str(len(tests))
