@@ -11,6 +11,7 @@
         * **count** - number of edges
         * 3 numbers on every line - **from**, **to**, **weight**
 * **Dijkstra** #2
+* **Dijkstra with Binomial Heap** #11
 * **Bellman-Ford** #3
     * reading of graph:
         * **count** - number of edges
