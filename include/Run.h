@@ -97,22 +97,6 @@ void Run() {
                 g.Prim();
                 break;
             }
-            case 13: {
-                AhoCorasick a(255, 30);
-                int amount;
-                std::cin >> amount;
-                
-                std::string s;
-                for (int i = 0; i < amount; ++i) {
-                    std::cin >> s;
-                    a.add_string(s);
-                }
-                
-                std::cin >> s;
-                int res = a.count_entry(s);
-                std::cout << res;
-                break;
-            }
             case 9: {
                 int n;
                 std::cin >> n;
@@ -127,8 +111,30 @@ void Run() {
                 std::cout << ans.first << ' ' << ans.second;
                 break;
             }
-            case 10: {
-                //TODO: Do it!
+            case 11: {
+                int n;
+                std::cin >> n;
+                graph<int, int, 1> g(n);
+                std::cin >> g;
+                int src;
+                std::cin >> src;
+                g.DijkstraBinHeap(src);
+                break;
+            }
+            case 13: {
+                AhoCorasick a(255, 30);
+                int amount;
+                std::cin >> amount;
+                
+                std::string s;
+                for (int i = 0; i < amount; ++i) {
+                    std::cin >> s;
+                    a.add_string(s);
+                }
+                
+                std::cin >> s;
+                int res = a.count_entry(s);
+                std::cout << res;
                 break;
             }
         }

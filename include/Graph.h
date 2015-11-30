@@ -96,6 +96,7 @@ public:
     void BellmanFord(int x);
     void FloydWarshall();
     void Dijkstra(int x);
+    void DijkstraBinHeap(int x);
     
     void Prim();
     void Kruscal();
@@ -795,8 +796,6 @@ void graph<T, S, R>::Tarjan() {
     }
 }
 
-
-//FIXME: Doesn't work correctly
 template <typename T, typename S, bool R>
 void graph<T, S, R>::BellmanFord(int x) {
     std::vector<int> d(n_);
@@ -942,6 +941,54 @@ void graph<T, S, R>::Dijkstra(int x) {
 }
 
 template <typename T, typename S, bool R>
+void graph<T, S, R>::DijkstraBinHeap(int x) {
+    //TODO: Update dist in heap. Add map[index] = shared_ptr
+    std::vector<int> dist(n_, INF);
+    dist[x] = 0;
+    
+    class my_comp {
+    public:
+        bool operator()(std::pair<S, S> a, std::pair<S, S> b) {
+            return a.second < b.second;
+        }
+    };
+    BinHeap<std::pair<S, S>, my_comp> order;
+    order.push({x, dist[x]});
+    
+    while (order.size() != 0) {
+        int myid = order.top().first;
+        order.pop();
+        for (auto it : data_[myid].adj_) {
+            if (dist[it.first] > dist[myid] + it.second) {
+                dist[it.first] = dist[myid] + it.second;
+                order.push({it.first, dist[it.first]});
+            }
+        }
+    }
+    // Output
+    std::vector<int> real_dist;
+    for (int i = 0; i < n_; ++i) {
+        if (data_[i].exist_) {
+            real_dist.push_back(dist[i]);
+        }
+    }
+    std::cout << real_dist.size() << std::endl;
+    for (int i = 0; i < real_dist.size(); ++i) {
+        if (real_dist[i] == INF) {
+            std::cout << -1;
+            if (i != real_dist.size()-1) {
+                std::cout << std::endl;
+            }
+        } else {
+            std::cout << real_dist[i];
+            if (i != real_dist.size()-1) {
+                std::cout << std::endl;
+            }
+        }
+    }
+}
+
+template <typename T, typename S, bool R>
 void graph<T, S, R>::Prim() {
     /* Structure for storing pairs of Vertexes and Weight of edges */
     typedef std::tuple<std::pair<int, int>, S> mystruct;
@@ -988,6 +1035,7 @@ void graph<T, S, R>::Prim() {
     std::cout << res;
 }
 
+/* class for Kruscal's algorithm */
 template <typename T>
 class DisjointSet {
 public:
