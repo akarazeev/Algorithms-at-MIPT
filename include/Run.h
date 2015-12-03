@@ -122,19 +122,29 @@ void Run() {
                 break;
             }
             case 13: {
-                AhoCorasick a(255, 30);
+                AhoCorasick a;
+                std::string s;
+                std::cin >> s;
+                std::ifstream fin(s);
+                assert(fin);
                 int amount;
                 std::cin >> amount;
-                
-                std::string s;
+                assert(amount != 0);
                 for (int i = 0; i < amount; ++i) {
                     std::cin >> s;
+                    assert(s != "");
                     a.add_string(s);
                 }
-                
-                std::cin >> s;
-                int res = a.count_entry(s);
-                std::cout << res;
+                std::string content;
+                while (std::getline(fin, s)) {
+                    content += s;
+                    content.push_back('\n');
+                }
+                assert(content != "");
+                auto res = a.count_seq(content);
+                for (auto it : res) {
+                    std::cout << it.first << std::endl;
+                }
                 break;
             }
         }
