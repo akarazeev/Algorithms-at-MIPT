@@ -8,51 +8,37 @@
 
 #include "MaxFlow.hpp"
 
-MaxFlow::MaxFlow(int n): data_(std::vector<std::vector<std::pair<double, double> > > (n,
-                                std::vector<std::pair<double, double> > (n,std::pair<double, double> ()))) {
+MaxFlow::MaxFlow(int n): data_(TableOfPairs (n,
+                                             std::vector<std::pair<double, double> >
+                                             (n,std::pair<double, double> ()))) {
     
 }
 
-void MaxFlow::AddEdge(int from, int to, int cap, int cost) {
+void MaxFlow::AddEdge(int from, int to, double cap, double cost) {
     data_[from][to] = {cap, cost};
     data_[to][from] = {0, -cost};
 }
 
-void MaxFlow::BellmanFord(std::vector<double>& dist, int s) {
-    for (int i = 0; i < this->Size(); ++i) {
-        dist[i] = Inf;
-    }
-    std::vector<int> pred(this->Size(), Inf);
-    dist[s] = 0;
-    
-    for (int i = 0; i < this->Size(); ++i) {
-        for (int v = 0; v < this->Size(); ++v) {
-            for (int u = 0; u < this->Size(); ++u) {
-                static std::pair<double, double> tmp (0, 0);
-                if (data_[u][v] != tmp && dist[v] > dist[u] + data_[u][v].second) {
-                    dist[v] = dist[u] + data_[u][v].second;
-                    pred[v] = u;
-                }
-            }
-        }
-    }
-}
-
-void MaxFlow::GetPath(std::vector<std::vector<std::pair<double, double> > >& flow,
-                      std::vector<int>& dist, std::vector<int>& path,
+void MaxFlow::GetPath(TableOfPairs& flow,
+                      std::vector<int>& dist,
+                      std::vector<int>& path,
                       double& df, int s, int t) {
-    dist = std::vector<int> (this->Size(), Inf);
-    std::vector<int> pred(this->Size(), Inf);
+    dist = std::vector<int> (Size(), kInf);
+    std::vector<int> pred(Size(), kInf);  // Predecessors
     dist[s] = 0;
     
-    for (int i = 0; i < this->Size(); ++i) {
-        for (int v = 0; v < this->Size(); ++v) {
-            for (int u = 0; u < this->Size(); ++u) {
+    for (int i = 0; i < Size(); ++i) {
+        for (int v = 0; v < Size(); ++v) {
+            for (int u = 0; u < Size(); ++u) {
                 static std::pair<double, double> tmp (0, 0);
-                if (data_[u][v] != tmp && flow[u][v].second < data_[u][v].first &&
+                if (data_[u][v] != tmp &&
+                    // second - flow, first - capacity
+                    flow[u][v].second < data_[u][v].first &&
                     dist[v] > dist[u] + data_[u][v].second) {
+                    
                     dist[v] = dist[u] + data_[u][v].second;
                     pred[v] = u;
+                    
                 }
             }
         }
@@ -60,14 +46,15 @@ void MaxFlow::GetPath(std::vector<std::vector<std::pair<double, double> > >& flo
     
     path.clear();
     
-    if (dist[t] >= Inf) {
+    if (dist[t] >= kInf) {
         return;
     }
-    assert(dist[t] < Inf);
-    df = Inf;
+    
+    assert(dist[t] < kInf);
+    df = kInf;
     for (int i = t; i != s; i = pred[i]) {
         path.push_back(i);
-        assert(pred[i] < Inf);
+        assert(pred[i] < kInf);
         if (df > flow[pred[i]][i].first-flow[pred[i]][i].second) {
             df = flow[pred[i]][i].first-flow[pred[i]][i].second;
         }
@@ -77,9 +64,9 @@ void MaxFlow::GetPath(std::vector<std::vector<std::pair<double, double> > >& flo
 
 std::pair<double, double> MaxFlow::Flow(int s, int t, double max_flow) {
     /* first - capacity, second - flow */
-    std::vector<std::vector<std::pair<double, double> > > flow(data_);
-    for (int i = 0; i < this->Size(); ++i) {
-        for (int j = 0; j < this->Size(); ++j) {
+    TableOfPairs flow(data_);
+    for (int i = 0; i < Size(); ++i) {
+        for (int j = 0; j < Size(); ++j) {
             flow[i][j].second = 0;
         }
     }
@@ -90,8 +77,8 @@ std::pair<double, double> MaxFlow::Flow(int s, int t, double max_flow) {
     double df = 0;
     
     while (curflow < max_flow) {
-        this->GetPath(flow, dist, path, df, s, t);
-        if (dist[t] == Inf) {
+        GetPath(flow, dist, path, df, s, t);
+        if (dist[t] == kInf) {
             break;
         }
         assert(df > 0);
@@ -135,4 +122,3 @@ MaxFlow& operator>>(std::istream& stream, MaxFlow& m) {
     }
     return m;
 }
-

@@ -14,16 +14,21 @@
 #include <iostream>
 #include <assert.h>
 
-const int Inf = 100000000;
-
 class MaxFlow {
 public:
+    typedef std::vector<std::vector<std::pair<double, double> > >
+    TableOfPairs;
+    
+    constexpr const static double kInf = 100000000;
+    
     MaxFlow(int n);
     
-    void AddEdge(int from, int to, int cap, int cost);
+    void AddEdge(int from, int to, double cap, double cost);
     
-    void BellmanFord(std::vector<double>& dist, int s);
-    void GetPath(std::vector<std::vector<std::pair<double, double> > >& flow, std::vector<int>& dist, std::vector<int>& path, double& df, int s, int t);
+    void GetPath(TableOfPairs& flow,
+                 std::vector<int>& dist,
+                 std::vector<int>& path,
+                 double& df, int s, int t);
     
     std::pair<double, double> Flow(int s, int t, double max_flow);
     
@@ -32,7 +37,7 @@ public:
     friend MaxFlow& operator>>(std::istream& stream, MaxFlow& m);
 private:
     /* first - capacity, second - cost */
-    std::vector<std::vector<std::pair<double, double> > > data_;
+    TableOfPairs data_;
 };
 
 #endif /* MaxFlow_hpp */

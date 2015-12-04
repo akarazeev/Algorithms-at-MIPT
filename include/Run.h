@@ -107,7 +107,7 @@ void Run() {
                 std::cin >> s;
                 
                 std::cin >> m;
-                std::pair<double, double> ans = m.Flow(t, s, Inf);
+                std::pair<double, double> ans = m.Flow(t, s, MaxFlow::kInf);
                 std::cout << ans.first << ' ' << ans.second;
                 break;
             }
