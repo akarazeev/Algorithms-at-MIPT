@@ -32,6 +32,7 @@ void AhoCorasick::add_string(const std::string& s) {
     states_[v].leaf = true;
     states_[v].leng = static_cast<int>(s.length());
     states_[v].word = s;
+    mapofwords.insert({s, mapofwords.size()});
 }
 
 int AhoCorasick::get_link(int v) {
@@ -65,7 +66,7 @@ int AhoCorasick::count_entry(const std::string& s) {
     int res = 0;
     for (int i = 0; i < s.length(); ++i) {
         v = go(v, s[i]);
-        for (int tmp = v; tmp > 0; tmp = this->get_link(tmp)) {
+        for (int tmp = v; tmp > 0; tmp = get_link(tmp)) {
             if (states_[tmp].leaf == true) {
                 ++res;
                 std::cout << res << '_' << states_[tmp].word << std::endl;
@@ -75,17 +76,39 @@ int AhoCorasick::count_entry(const std::string& s) {
     return res;
 }
 
-std::set<AhoCorasick::elem, AhoCorasick::cmp> AhoCorasick::count_seq(
-                                                const std::string& s) {
-    std::set<elem, cmp> res;
+std::set<AhoCorasick::Elem, AhoCorasick::cmp> AhoCorasick::count_seq(
+                                                                     const std::string& s) {
+    std::set<Elem, cmp> res;
     int v = 0;
     for (int i = 0; i < s.size(); ++i) {
         v = go(v, s[i]);
-        for (int tmp = v; tmp > 0; tmp = this->get_link(tmp)) {
+        for (int tmp = v; tmp > 0; tmp = get_link(tmp)) {
             if (states_[tmp].leaf == true) {
                 res.insert({i-states_[tmp].leng+1, states_[tmp].word});
             }
         }
     }
+    return res;
+}
+
+std::vector<std::pair<std::string, std::set<int> > > AhoCorasick::count_seq_sorted(
+                                                                                   const std::string& s) {
+    std::map<std::string, std::set<int> > tmp_res;
+    int v = 0;
+    for (int i = 0; i < s.size(); ++i) {
+        v = go(v, s[i]);
+        for (int tmp = v; tmp > 0; tmp = get_link(tmp)) {
+            if (states_[tmp].leaf == true) {
+                tmp_res[states_[tmp].word].insert(i-states_[tmp].leng+1);
+            }
+        }
+    }
+    std::vector<std::pair<std::string, std::set<int> > > res;
+    for (auto it : tmp_res) {
+        res.push_back(it);
+    }
+    std::sort(res.begin(), res.end(), [](std::pair<std::string, std::set<int> > a, std::pair<std::string, std::set<int> > b) {
+        return *(b.second.begin()) > *(a.second.begin());
+    });
     return res;
 }

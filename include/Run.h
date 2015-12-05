@@ -145,6 +145,14 @@ void Run() {
                 for (auto it : res) {
                     std::cout << it.first << std::endl;
                 }
+//                auto res = a.count_seq_sorted(content);
+//                for (auto it : res) {
+//                    std::cout << it.first << ' ';
+//                    for (auto it2 : it.second) {
+//                        std::cout << it2 << ' ';
+//                    }
+//                    std::cout << std::endl;
+//                }
                 break;
             }
         }
