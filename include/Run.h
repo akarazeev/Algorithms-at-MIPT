@@ -17,6 +17,7 @@
 #include "Graph.h"
 #include "Puzzle.h"
 #include "Fenwick.h"
+#include "KMP.hpp"
 
 void Run() {
     // Amount of tests
@@ -141,20 +142,40 @@ void Run() {
                     content.push_back('\n');
                 }
                 assert(content != "");
-                auto res = a.count_seq(content);
-                for (auto it : res) {
-                    std::cout << it.first << std::endl;
-                }
-//                auto res = a.count_seq_sorted(content);
+//                auto res = a.count_seq(content);
 //                for (auto it : res) {
-//                    std::cout << it.first << ' ';
-//                    for (auto it2 : it.second) {
-//                        std::cout << it2 << ' ';
-//                    }
-//                    std::cout << std::endl;
+//                    std::cout << it.first << std::endl;
 //                }
+                auto res = a.count_seq_sorted(content);
+                for (auto it : res) {
+                    std::cout << it.first << ' ';
+                    for (auto it2 : it.second) {
+                        std::cout << it2 << ' ';
+                    }
+                    std::cout << std::endl;
+                }
                 break;
             }
+            case 14:
+                std::string s;
+//                std::cin >> s;
+//                std::ifstream fin(s);
+                std::ifstream fin("tests/data1.txt");
+                assert(fin);
+                std::string content;
+                while (std::getline(fin, s)) {
+                    content += s;
+                    content.push_back('\n');
+                }
+                assert(content != "");
+                
+                std::cin >> s;
+                
+                auto res = KMP(content, s);
+                for_each(res.begin(), res.end(), [](int x) {
+                    std::cout << x << ' ';
+                });
+                break;
         }
     }
 }

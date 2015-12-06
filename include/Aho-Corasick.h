@@ -54,7 +54,6 @@ public:
 private:
     int size_;  // counter of statements
     std::vector<vertex> states_;  // all statements
-    std::map<std::string, int> mapofwords;
 };
 
 #endif /* Aho_Corasick_h */

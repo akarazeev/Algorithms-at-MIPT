@@ -32,7 +32,6 @@ void AhoCorasick::add_string(const std::string& s) {
     states_[v].leaf = true;
     states_[v].leng = static_cast<int>(s.length());
     states_[v].word = s;
-    mapofwords.insert({s, mapofwords.size()});
 }
 
 int AhoCorasick::get_link(int v) {
