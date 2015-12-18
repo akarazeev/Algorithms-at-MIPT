@@ -27,7 +27,11 @@
 
 const int INF = 1000000;
 
-enum color{WHITE, GREY, BLACK};
+enum color{
+    WHITE,
+    GREY,
+    BLACK
+};
 
 template <typename T, typename S>
 class vertex {
@@ -37,13 +41,14 @@ public:
     void operator=(vertex& other);
     bool IsSink();
     
-    bool exist_ = 0;
+    bool exist_ = false;
     T value_;
     int label_ = 0;
     int low_ = 0;
+    
     /* Adjacency list with ID and weight of edge */
     std::list<std::pair<int, S> > adj_;
-    int col_ = WHITE;
+    color col_ = WHITE;
 };
 
 /*
@@ -58,10 +63,10 @@ public:
     graph(int n);
     graph(const graph<T, S, R>& g);
     
-    graph<T, S, R> Flipped();
-    void Flip();
-    int DataSize();
-    int NumbOfVert();
+    graph<T, S, R> Transposed();
+    void Transpose();
+    int AllocSize();
+    int RealNumbOfVert();
     
     void DeleteVertex(T src);
     void DeleteEdge(T src1, T src2);
@@ -112,30 +117,30 @@ public:
     std::set<T> GetSources();
     std::set<T> GetSinks();
     
-////    FIXME: Doesn't work!
-//        class bfs_const_iterator {
-//        public:
-//            bfs_const_iterator(std::vector<T>& bfs_vertex, typename std::vector<T>::const_iterator it);
-//            bfs_const_iterator operator++();
-//            bfs_const_iterator operator++(int);
-//            T operator*() const;
-//            bool operator!=(const bfs_const_iterator other) const;
-//        private:
-//            std::vector<T> bfs_vertex_;
-//            typename std::vector<T>::const_iterator it_;
-//        };
-//    
-//        bfs_const_iterator bfs_begin(T val) {
-//            std::vector<T> vec = BFStoIt(val);
-//            bfs_const_iterator it(vec, vec.cbegin());
-//            return it;
-//        }
-//    
-//        bfs_const_iterator bfs_end(T val) {
-//            std::vector<T> vec = BFStoIt(val);
-//            bfs_const_iterator it(vec, vec.cend());
-//            return it;
-//        }
+    ////    FIXME: Doesn't work!
+    //        class bfs_const_iterator {
+    //        public:
+    //            bfs_const_iterator(std::vector<T>& bfs_vertex, typename std::vector<T>::const_iterator it);
+    //            bfs_const_iterator operator++();
+    //            bfs_const_iterator operator++(int);
+    //            T operator*() const;
+    //            bool operator!=(const bfs_const_iterator other) const;
+    //        private:
+    //            std::vector<T> bfs_vertex_;
+    //            typename std::vector<T>::const_iterator it_;
+    //        };
+    //
+    //        bfs_const_iterator bfs_begin(T val) {
+    //            std::vector<T> vec = BFStoIt(val);
+    //            bfs_const_iterator it(vec, vec.cbegin());
+    //            return it;
+    //        }
+    //
+    //        bfs_const_iterator bfs_end(T val) {
+    //            std::vector<T> vec = BFStoIt(val);
+    //            bfs_const_iterator it(vec, vec.cend());
+    //            return it;
+    //        }
     
     template <typename TT, typename SS, bool RR>
     friend std::ostream& operator<<(std::ostream& stream, graph<TT, SS, RR>& g);
@@ -228,7 +233,7 @@ graph<T, S, R>::graph(int n): n_(n), oriented_(R), data_(std::vector<vertex<T, S
 
 template <typename T, typename S, bool R>
 graph<T, S, R>::graph(const graph<T, S, R>& g): data_(g.data_), n_(g.n_), oriented_(g.oriented_),
-                                                existed_(g.existed_), dependence_(g.dependence_) {
+existed_(g.existed_), dependence_(g.dependence_) {
     
 }
 
@@ -244,7 +249,7 @@ bool graph<T, S, R>::IsSinkVal(T val) {
 
 template <typename T, typename S, bool R>
 bool graph<T, S, R>::IsSource(T val) {
-    graph<T, S, R> buf(this->Flipped());
+    graph<T, S, R> buf(this->Transposed());
     return buf.data_[buf.existed_.find(val)->second].adj_.size() == 0;
 }
 
@@ -274,24 +279,7 @@ bool graph<T, S, R>::HasWhiteAdjVertex(int x) {
 }
 
 template <typename T, typename S, bool R>
-void graph<T, S, R>::Flip() {
-    if (oriented_ == 1) {
-        std::vector<vertex<T, S> > data(n_);
-        for (int i = 0; i < n_; ++i) {
-            data[i].value_ = data_[i].value_;
-            data[i].exist_ = data_[i].exist_;
-        }
-        for (int i = 0; i < n_; ++i) {
-            for (auto it = data_[i].adj_.begin(); it != data_[i].adj_.end(); ++it) {
-                data[it->first].adj_.push_back(std::pair<int, S>(i, it->second));
-            }
-        }
-        data_ = data;
-    }
-}
-
-template <typename T, typename S, bool R>
-graph<T, S, R> graph<T, S, R>::Flipped() {
+graph<T, S, R> graph<T, S, R>::Transposed() {
     graph<T, S, R> res(*this);
     if (res.oriented_ == 1) {
         std::vector<vertex<T, S> > data(n_);
@@ -309,12 +297,17 @@ graph<T, S, R> graph<T, S, R>::Flipped() {
 }
 
 template <typename T, typename S, bool R>
-int graph<T, S, R>::DataSize() {
+void graph<T, S, R>::Transpose() {
+    *this = Transposed();
+}
+
+template <typename T, typename S, bool R>
+int graph<T, S, R>::AllocSize() {
     return n_;
 }
 
 template <typename T, typename S, bool R>
-int graph<T, S, R>::NumbOfVert() {
+int graph<T, S, R>::RealNumbOfVert() {
     int res = 0;
     for (int i = 0; i < n_; ++i) {
         if (data_[i].exist_) {
@@ -351,7 +344,7 @@ void graph<T, S, R>::DeleteVertex(T src) {
     int x = existed_.find(src)->second;
     existed_.erase(existed_.find(src));
     data_[x].value_ = NULL;
-    data_[x].exist_ = 0;
+    data_[x].exist_ = false;
     data_[x].adj_.clear();
     for (auto itdata = data_.begin(); itdata != data_.end(); ++itdata) {
         for (auto itlist = itdata->adj_.begin(); itlist != itdata->adj_.end(); ++itlist) {
@@ -398,11 +391,11 @@ void graph<T, S, R>::AddVertex(int x, vertex<T, S>& v) {
         if (n_ < x + 1) {
             n_ = 1 + (3 * x)/2;
             data_.resize(n_);
-            v.exist_ = 1;
+            v.exist_ = true;
             data_[x] = v;
             existed_.insert(std::pair<T, int>(v.value_, x));
         } else {
-            v.exist_ = 1;
+            v.exist_ = true;
             data_[x] = v;
             existed_.insert(std::pair<T, int>(v.value_, x));
         }
@@ -416,12 +409,12 @@ void graph<T, S, R>::AddVertex(int x, T val) {
             n_ = 1 + (3 * x)/2;
             data_.resize(n_);
             vertex<T, S> v(val);
-            v.exist_ = 1;
+            v.exist_ = true;
             data_[x] = v;
             existed_.insert(std::pair<T, int>(val, x));
         } else {
             vertex<T, S> v(val);
-            v.exist_ = 1;
+            v.exist_ = true;
             data_[x] = v;
             existed_.insert(std::pair<T, int>(val, x));
         }
@@ -533,7 +526,7 @@ std::vector<T> graph<T, S, R>::GetVertexTo(T src) const {
     if (oriented_ == 1) {
         std::vector<T> res;
         graph<T, S, R> g(*this);
-        g.Flip();
+        g.Transpose();
         int x = existed_.find(src)->second;
         for (auto it = g.data_[x].adj_.begin(); it != g.data_[x].adj_.end(); ++it) {
             res.push_back(data_[it->first].value_);
@@ -554,7 +547,7 @@ std::vector<std::pair<T, T> > graph<T, S, R>::GetEdgeTo(T src) const {
     if (oriented_ == 1) {
         std::vector<std::pair<T, T> > res;
         graph<T, S, R> g(*this);
-        g.Flip();
+        g.Transpose();
         int x = existed_.find(src)->second;
         for (auto it = g.data_[x].adj_.begin(); it != g.data_[x].adj_.end(); ++it) {
             res.push_back({data_[it->first].value_, src});
@@ -649,7 +642,7 @@ void graph<T, S, R>::DFS(T val) {
 
 template <typename T, typename S, bool R>
 void graph<T, S, R>::Kosaraju() {
-    graph<T, S, R> flipped = this->Flipped();
+    graph<T, S, R> Transposed = this->Transposed();
     std::stack<int> stk;
     std::stack<int> pass_out;
     for (int i = 0; i < n_; ++i) {
@@ -669,7 +662,7 @@ void graph<T, S, R>::Kosaraju() {
                 pass_out.push(u);
             } else {
                 for (auto it : data_[u].adj_) {
-                int v = it.first;
+                    int v = it.first;
                     if (data_[v].col_ == WHITE) {
                         data_[v].col_ = GREY;
                         stk.push(v);
@@ -681,28 +674,28 @@ void graph<T, S, R>::Kosaraju() {
         }
     }
     for (int i = 0; i < n_; ++i) {
-        flipped.data_[i].col_ = WHITE;
+        Transposed.data_[i].col_ = WHITE;
     }
     std::vector<std::set<T> > scc;
     while (pass_out.empty() == 0) {
         int x = pass_out.top();
         pass_out.pop();
-        if (flipped.data_[x].col_ == BLACK) {
+        if (Transposed.data_[x].col_ == BLACK) {
             continue;
         }
-        flipped.data_[x].col_ = BLACK;
+        Transposed.data_[x].col_ = BLACK;
         stk.push(x);
         std::set<T> tmp;
         while (stk.empty() == 0) {
             int u = stk.top();
             stk.pop();
-            tmp.insert(flipped.data_[u].value_);
-            for (auto it : flipped.data_[u].adj_) {
+            tmp.insert(Transposed.data_[u].value_);
+            for (auto it : Transposed.data_[u].adj_) {
                 int v = it.first;
-                if (flipped.data_[v].col_ == WHITE) {
-                    flipped.data_[v].col_ = BLACK;
+                if (Transposed.data_[v].col_ == WHITE) {
+                    Transposed.data_[v].col_ = BLACK;
                     stk.push(v);
-                    flipped.data_[v].col_ = BLACK;
+                    Transposed.data_[v].col_ = BLACK;
                 }
             }
         }
@@ -729,7 +722,8 @@ void graph<T, S, R>::Kosaraju() {
 // This function is used in Tarjan algorithm
 // x is an ID of Vertex
 template <typename T, typename S, bool R>
-void graph<T, S, R>::StrongConnect(int x, int& step, std::stack<int>& stk, std::vector<std::set<T> >& scc) {
+void graph<T, S, R>::StrongConnect(int x, int& step, std::stack<int>& stk,
+                                   std::vector<std::set<T> >& scc) {
     data_[x].low_ = step;
     data_[x].label_ = step;
     ++step;
@@ -768,12 +762,14 @@ void graph<T, S, R>::Tarjan() {
     std::stack<int> stk;
     std::vector<std::set<T> > scc;
     int step = 1;
+    // Main part
     for (int i = 0; i < n_; ++i) {
         if (data_[i].label_ == 0 && data_[i].exist_) {
             StrongConnect(i, step, stk, scc);
         }
     }
     std::cout << scc.size() << std::endl;
+    // Just sorting
     std::sort(scc.begin(), scc.end(), [](std::set<T> a, std::set<T> b) {
         if (a.size() == b.size()) {
             return *(a.begin()) < *(b.begin());
@@ -781,6 +777,7 @@ void graph<T, S, R>::Tarjan() {
             return a.size() < b.size();
         }
     });
+    // Output
     for (int i = 0; i < scc.size(); ++i) {
         int j = 0;
         for (auto it : scc[i]) {
@@ -1093,12 +1090,12 @@ void graph<T, S, R>::Kruscal() {
         if (data_[i].exist_) {
             for (auto it : data_[i].adj_) {
                 if (i < it.first) {
-                order.push(mystruct ({i, it.first}, it.second));
+                    order.push(mystruct ({i, it.first}, it.second));
                 }
             }
         }
     }
-    int numb = this->NumbOfVert();
+    int numb = this->RealNumbOfVert();
     /* Main cycle */
     while (answer.size() != numb-1) {
         mystruct tmp = order.top();
@@ -1113,7 +1110,7 @@ void graph<T, S, R>::Kruscal() {
     /* Output */
     S res = 0;
     for (auto it : answer) {
-//        std::cout << std::get<0>(it).first << ' ' << std::get<0>(it).second << ' ' << std::get<1>(it) << std::endl;
+        //        std::cout << std::get<0>(it).first << ' ' << std::get<0>(it).second << ' ' << std::get<1>(it) << std::endl;
         res += std::get<1>(it);
     }
     std::cout << res;

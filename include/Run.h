@@ -19,6 +19,21 @@
 #include "Fenwick.h"
 #include "KMP.hpp"
 
+enum Algo {
+    TARJAN = 0,
+    KOSARAJU = 1,
+    DIJKSTRA = 2,
+    BELLMAN_FORD = 3,
+    FLOYD_WARSHALL = 4,
+    PUZZLE = 5,
+    KRUSCAL = 7,
+    PRIM = 8,
+    MAX_FLOW = 9,
+    DIJKSTRA_BIN_HEAP = 11,
+    AHO_CORASICK = 13,
+    KMP_ALG = 14
+};
+
 void Run() {
     // Amount of tests
     int quant = 1;
@@ -31,7 +46,7 @@ void Run() {
         int w;
         std::cin >> w;
         switch (w) {
-            case 0: {
+            case TARJAN: {
                 int n;
                 std::cin >> n;
                 graph<int, int, 1> g(n);
@@ -39,7 +54,7 @@ void Run() {
                 g.Tarjan();
                 break;
             }
-            case 1: {
+            case KOSARAJU: {
                 int n;
                 std::cin >> n;
                 graph<int, int, 1> g(n);
@@ -47,7 +62,7 @@ void Run() {
                 g.Kosaraju();
                 break;
             }
-            case 2: {
+            case DIJKSTRA: {
                 int n;
                 std::cin >> n;
                 graph<int, int, 1> g(n);
@@ -57,7 +72,7 @@ void Run() {
                 g.Dijkstra(src);
                 break;
             }
-            case 3: {
+            case BELLMAN_FORD: {
                 int n;
                 std::cin >> n;
                 graph<int, int, 1> g(n);
@@ -67,7 +82,7 @@ void Run() {
                 g.BellmanFord(src);
                 break;
             }
-            case 4: {
+            case FLOYD_WARSHALL: {
                 int n;
                 std::cin >> n;
                 graph<int, int, 1> g(n);
@@ -75,13 +90,13 @@ void Run() {
                 g.FloydWarshall();
                 break;
             }
-            case 5: {
+            case PUZZLE: {
                 Puzzle p;
                 std::cin >> p;
                 p.Solve();
                 break;
             }
-            case 7: {
+            case KRUSCAL: {
                 int n;
                 std::cin >> n;
                 assert(n != 0);
@@ -90,7 +105,7 @@ void Run() {
                 g.Kruscal();
                 break;
             }
-            case 8: {
+            case PRIM: {
                 int n;
                 std::cin >> n;
                 graph<int, int, 0> g(n);
@@ -98,7 +113,7 @@ void Run() {
                 g.Prim();
                 break;
             }
-            case 9: {
+            case MAX_FLOW: {
                 int n;
                 std::cin >> n;
                 MaxFlow m(n);
@@ -112,7 +127,7 @@ void Run() {
                 std::cout << ans.first << ' ' << ans.second;
                 break;
             }
-            case 11: {
+            case DIJKSTRA_BIN_HEAP: {
                 int n;
                 std::cin >> n;
                 graph<int, int, 1> g(n);
@@ -122,8 +137,9 @@ void Run() {
                 g.DijkstraBinHeap(src);
                 break;
             }
-            case 13: {
+            case AHO_CORASICK: {
                 AhoCorasick a;
+                
                 std::string s;
                 std::cin >> s;
                 std::ifstream fin(s);
@@ -156,7 +172,7 @@ void Run() {
                 }
                 break;
             }
-            case 14:
+            case KMP_ALG:
                 std::string s;
 //                std::cin >> s;
 //                std::ifstream fin(s);
