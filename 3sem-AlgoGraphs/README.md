@@ -1,4 +1,4 @@
-# Tasks of Third Semester #
+# Tasks of Third Semester
 
 ###  Graph Algorithms
 * **Tarjan** #0
@@ -37,5 +37,4 @@
 ### String Algoritms
 * **Аho-Corasick** #13
     * N - amount of words
-    * N words
     * s - text
