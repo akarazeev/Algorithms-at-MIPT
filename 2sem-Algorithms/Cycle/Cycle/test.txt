@@ -1,0 +1,6 @@
+5
+A 4 X C X A1
+X 0
+A1 2 D A1
+D 2 X X
+C 1 A
