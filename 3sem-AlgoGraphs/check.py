@@ -29,6 +29,7 @@ if __name__ == '__main__':
     dirname = sys.argv[2]
 
     dir_numb = {0, 7, 9, 3, 13, 4, 11, 2, 8}
+    dir_numb = {0, 9}
 
     for i in dir_numb:
         print bcolors.UNDERLINE + 'Algorithm #' + str(i) + bcolors.ENDC
