@@ -1,145 +1,37 @@
-////
-////  main.cpp
-////  milliarders
-////
-////  Created by Anton Karazeev on 19/08/2017.
-////  Copyright © 2017 Anton Karazeev. All rights reserved.
-////
 //
-//#include <string>
-//#include <set>
-//#include <map>
-//#include <unordered_map>
-//#include <iostream>
-//#include <functional>
-//#include <vector>
-//#include <algorithm>
+//  main.cpp
+//  milliarders
 //
-//const int maxn = 10000;
-//const int maxk = 50000;
+//  Created by Anton Karazeev on 19/08/2017.
+//  Copyright © 2017 Anton Karazeev. All rights reserved.
 //
-//struct City {
-//    long long money;
-//    int days; // Number of days on the top
-//    std::string name;
-//} cities[maxn+maxk];
-//
-//struct Person {
-//    std::string name;
-//    long long money;
-//    City* location;
-//} persons[maxn];
-//
-//std::unordered_map<std::string, Person*> personMap; // Maps names into people
-//std::map<std::string, City*> cityMap; // Maps names into cities
-//
-//class cmp {
-//public:
-//    bool operator()(const std::pair<long long, City*>& left, const std::pair<long long, City*>& right) {
-//        return left.second->money > right.second->money;
-//    }
-//};
-//
-//std::set<std::pair<long long, City*>, cmp> scoreBoard; // The cities ordered by money
-//
-//int main() {
-//    int n;
-//    std::cin >> n;
-//    int city_counter = 0;
-//    
-//    for (int i = 0; i < n; ++i) {
-//        std::string tmp_name;
-//        std::string tmp_city;
-//        long long tmp_cash;
-//        
-//        std::cin >> tmp_name;
-//        std::cin >> tmp_city;
-//        std::cin >> tmp_cash;
-//        
-//        personMap[tmp_name] = &persons[i];
-//
-//        if(!cityMap[tmp_city]) {
-//            cityMap[tmp_city] = &cities[++city_counter];
-//        }
-//
-//        persons[i].location = cityMap[tmp_city];
-//        persons[i].money = tmp_cash;
-//        cityMap[tmp_city]->name = tmp_city;
-//        cityMap[tmp_city]->money += tmp_cash;
-//
-//    }
-//    for(auto c : cityMap) {
-//        scoreBoard.insert({c.second->money, c.second});
-//    }
-//    
-//    int m; // number of days
-//    int k; // number of movements
-//    std::cin >> m >> k;
-//    
-//    int prevday = 0;
-//    
-//    for (int i = 0; i < k+1; ++i) {
-//        int tmp_day = 0;
-//        std::string tmp_name;
-//        std::string tmp_city;
-//        
-//        if (i < k) {
-//            std::cin >> tmp_day;
-//            std::cin >> tmp_name;
-//            std::cin >> tmp_city;
-//        }
-//        
-//        bool finished = (i == k);
-//        
-//        if(finished) { // Zoom to the last day m (the last entry could be many days prior)
-//            tmp_day = m;
-//        }
-//        if(tmp_day != prevday) {
-//            auto it2 = scoreBoard.begin();
-//            auto it = it2++;
-//            if(it2 == scoreBoard.end() || it->first > it2->first) {
-//                it->second->days += tmp_day - prevday;
-//            }
-//        }
-//        if(finished) {
-//            break;
-//        }
-//        if(!cityMap[tmp_city]) { // New city mentioned
-//            cityMap[tmp_city] = &cities[city_counter++];
-//            cityMap[tmp_city]->name = tmp_city;
-//        }
-//
-//        // Update the set and the city data structure itself
-//        auto nextplace = cityMap[tmp_city];
-//        auto person = personMap[tmp_name];
-//        auto prevplace = person->location;
-//        auto prevmoney = prevplace->money;
-//
-//        scoreBoard.erase({prevmoney, prevplace});
-//        prevplace->money -= person->money;
-//        scoreBoard.insert({prevplace->money, prevplace});
-//        scoreBoard.erase({nextplace->money, nextplace});
-//        nextplace->money += person->money;
-//        scoreBoard.insert({nextplace->money, nextplace});
-//        person->location = nextplace;
-//        prevday = tmp_day;
-//    }
-//    
-//    std::vector<std::pair<std::string, int> > output;
-//    for(auto& iter : scoreBoard) {
-//        if(iter.second->days) {
-//            output.push_back(std::make_pair(iter.second->name, iter.second->days));
-//        }
-//    }
-//
-//    std::sort(output.begin(), output.end());
-//    
-//    for(auto& iter : output) {
-//        std::cout << iter.first << " " << iter.second << "n";
-//    }
-//    
-//    return 0;
-//}
+
+/*
+
+in:
+5
+Abramovich London 150
+Deripaska Moscow 100
+Potanin Moscow 50
+Berezovsky London 25
+Khodorkovsky Chita 1
+25 9
+1 Abramovich Anadyr
+5 Potanin Courchevel
+10 Abramovich Moscow
+11 Abramovich London
+11 Deripaska StPetersburg
+15 Potanin Norilsk
+20 Berezovsky Tbilisi
+21 Potanin StPetersburg
+22 Berezovsky London
+ 
+out:
+Anadyr 5
+London 14
+Moscow 1
+ 
+*/
 
 #include <string>
 #include <set>
@@ -150,73 +42,98 @@
 #include <algorithm>
 #include <vector>
 
-const int maxn = 10000, maxm = 50000, maxk = 50000;
+const int maxn = 10000; // max number of milliarders
+const int maxk = 50000; // max number of registered movements
 
-struct City
-{
+struct City {
     long long money;
-    int days; // Number of days on the top
+    int days; // Number of days being on the top
     std::string name;
-} cities[maxn+maxk];
+} cities[maxn + maxk];
 
-struct Person
-{
+struct Person {
     std::string name;
     long long money;
     City* location;
 } persons[maxn];
 
-std::unordered_map<std::string, Person*> personMap; // Maps names into people
-std::map<std::string, City*> cityMap; // Maps names into cities
-
 class cmp {
 public:
     bool operator()(const std::pair<long long, City*>& left, const std::pair<long long, City*>& right) {
-        return left.second->money > right.second->money;
+        if (left.first == right.first) {
+            return left.second->name > right.second->name;
+        } else {
+            return left.first > right.first;
+        }
     }
 };
 
-std::set<std::pair<long long, City*>, cmp> scoreBoard; // The cities ordered by money
-
-int main()
-{
-    std::ios::sync_with_stdio(false);
-    int n, m, k, c = 0;
+int main() {
+    std::unordered_map<std::string, int> answer; // Cities and number of days being on the top
+    std::unordered_map<std::string, Person*> personMap; // Maps names into people
+    std::set<std::pair<long long, City*>, cmp> scoreBoard; // The cities ordered by money
+    std::map<std::string, City*> cityMap; // Maps names into cities
+    
+    int n; // number of names to read
     std::cin >> n;
-    for(int i = 0; i < n; i++)
-    {
-        std::string name, location; long long money;
+    
+    int city_counter = 0;
+    
+    /* Read name, initial location and money */
+    for (int i = 0; i < n; ++i) {
+        std::string name;
+        std::string location;
+        long long money;
+        
         std::cin >> name >> location >> money;
+        
         personMap[name] = &persons[i];
-        if(!cityMap[location])
-            cityMap[location] = &cities[c++];
+        
+        if(!cityMap[location]) {
+            cityMap[location] = &cities[city_counter++];
+        }
+        
         persons[i].location = cityMap[location];
         persons[i].money = money;
         cityMap[location]->name = location;
         cityMap[location]->money += money;
     }
-    for(auto c : cityMap)
-        scoreBoard.insert( { c.second->money, c.second } );
+
+    for (auto c : cityMap) {
+        // {money, city}
+        scoreBoard.insert({c.second->money, c.second});
+    }
+    
+    int m; // total number of days with available data
+    int k; // number of registered movements
+    
     std::cin >> m >> k;
-    int prevday = 0, day;
+    
+    int prevday = 0;
+    int day = -1;
     std::string name, place;
-    while(true)
-    {
-        bool finished = (!(std::cin >> day >> name >> place));
-        if(finished) // Zoom to the last day m (the last entry could be many days prior)
-            day = m;
-        if(day != prevday)
-        {
+    
+    /* Read registered movements */
+    for (int i = 0; i < k; ++i) {
+        std::cin >> day >> name >> place;
+        
+        if(day != prevday) {
             auto it2 = scoreBoard.begin();
-            auto it = it2++;
-            if(it2 == scoreBoard.end() || it->first > it2->first)
-                it->second->days += day-prevday;
+            auto it = it2;
+            ++it2;
+            if(it2 == scoreBoard.end() || it->first > it2->first) {
+                it->second->days += day - prevday;
+                
+                if (!answer[it->second->name]) {
+                    answer[it->second->name] = 1;
+                } else {
+                    answer[it->second->name] += day - prevday;
+                }
+            }
         }
-        if(finished)
-            break;
-        if(!cityMap[place]) // New city mentioned
-        {
-            cityMap[place] = &cities[c++];
+
+        if(!cityMap[place]) { // New city mentioned
+            cityMap[place] = &cities[city_counter++];
             cityMap[place]->name = place;
         }
         
@@ -225,99 +142,42 @@ int main()
         auto person = personMap[name];
         auto prevplace = person->location;
         auto prevmoney = prevplace->money;
-        scoreBoard.erase( { prevmoney, prevplace } );
+        
+        scoreBoard.erase({prevmoney, prevplace});
         prevplace->money -= person->money;
-        scoreBoard.insert( { prevplace->money, prevplace } );
-        scoreBoard.erase( { nextplace->money, nextplace } );
+        scoreBoard.insert({prevplace->money, prevplace});
+        
+        scoreBoard.erase({nextplace->money, nextplace});
         nextplace->money += person->money;
-        scoreBoard.insert( { nextplace->money, nextplace } );
+        scoreBoard.insert({nextplace->money, nextplace});
+        
         person->location = nextplace;
         prevday = day;
     }
-    std::vector<std::pair<std::string, int>> output;
-    for(auto& r : scoreBoard)
-        if(r.second->days)
-            output.push_back( std::make_pair(r.second->name, r.second->days));
+    
+    day = m;
+    if(day != prevday) {
+        auto it2 = scoreBoard.begin();
+        auto it = it2;
+        ++it2;
+        if(it2 == scoreBoard.end() || it->first > it2->first) {
+            it->second->days += day-prevday;
+        }
+    }
+    
+    /* Build output vector */
+    std::vector<std::pair<std::string, int> > output;
+    for(auto& r : scoreBoard) {
+        if(r.second->days) {
+            output.push_back({r.second->name, r.second->days});
+        }
+    }
+    
     std::sort(output.begin(), output.end());
-    for(auto& o : output)
-        std::cout << o.first << " " << o.second << "n";
+    
+    for(auto& o : output) {
+        std::cout << o.first << " " << o.second << std::endl;
+    }
+    
+    return 0;
 }
-
-//int main() {
-//    std::ios::sync_with_stdio(false);
-//    int n, m, k, c = 0;
-//    std::cin >> n;
-//    
-//    for (int i = 0; i < n; i++) {
-//        std::string name, location;
-//        long long money;
-//        
-//        std::cin >> name >> location >> money;
-//        
-//        personMap[name] = &persons[i];
-//        
-//        if(!cityMap[location]) {
-//            cityMap[location] = &cities[c++];
-//        }
-//        
-//        persons[i].location = cityMap[location];
-//        persons[i].money = money;
-//        cityMap[location]->name = location;
-//        cityMap[location]->money += money;
-//    }
-//    
-//    for(auto c : cityMap) {
-//        scoreBoard.insert( { c.second->money, c.second } );
-//    }
-//
-//    std::cin >> m >> k;
-//    int prevday = 0, day;
-//    std::string name, place;
-//
-
-
-
-
-//    while(true)
-//    {
-//        bool finished = (!(std::cin >> day >> name >> place));
-//        if(finished) // Zoom to the last day m (the last entry could be many days prior)
-//            day = m;
-//        if(day != prevday)
-//        {
-//            auto it2 = scoreBoard.begin();
-//            auto it = it2++;
-//            if(it2 == scoreBoard.end() || it->first > it2->first)
-//                it->second->days += day-prevday;
-//        }
-//        if(finished)
-//            break;
-//        if(!cityMap[place]) // New city mentioned
-//        {
-//            cityMap[place] = &cities[c++];
-//            cityMap[place]->name = place;
-//        }
-//        
-//        // Update the set and the city data structure itself
-//        auto nextplace = cityMap[place];
-//        auto person = personMap[name];
-//        auto prevplace = person->location;
-//        auto prevmoney = prevplace->money;
-//        scoreBoard.erase( { prevmoney, prevplace } );
-//        prevplace->money -= person->money;
-//        scoreBoard.insert( { prevplace->money, prevplace } );
-//        scoreBoard.erase( { nextplace->money, nextplace } );
-//        nextplace->money += person->money;
-//        scoreBoard.insert( { nextplace->money, nextplace } );
-//        person->location = nextplace;
-//        prevday = day;
-//    }
-//    
-//    std::vector<std::pair<std::string, int> > output;
-//    for(auto& r : scoreBoard)
-//        if(r.second->days)
-//            output.push_back( std::make_pair(r.second->name, r.second->days));
-//    std::sort(output.begin(), output.end());
-//    for(auto& o : output)
-//        std::cout << o.first << " " << o.second << "n";
-//}
