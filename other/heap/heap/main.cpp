@@ -17,9 +17,26 @@ public:
     
     Heap(std::vector<int> data) : data_(data) {
         // Heapify.
+//        for (int i = static_cast<int>(data_.size()) - 1; i >= 0; --i) {
+//            sift_up(i);
+//        }
+        this->heapify();
+    }
+    
+    void heapify() {
         for (int i = static_cast<int>(data_.size()) - 1; i >= 0; --i) {
             sift_up(i);
         }
+    }
+    
+    void erase(int val) {
+        for (auto iter = data_.begin(); iter != data_.end(); ++iter) {
+            if (*iter == val) {
+                data_.erase(iter);
+                break;
+            }
+        }
+        this->heapify();
     }
     
     void insert(int value) {
@@ -70,6 +87,10 @@ public:
         return data_;
     }
     
+    bool empty() {
+        return data_.size() == 0;
+    }
+    
 private:
     std::vector<int> data_;
 };
@@ -96,6 +117,12 @@ int main() {
     std::vector<int> array = {4, 7, 2, 1, 10, 3};
     h = Heap(array);
     h.traverse();
+    
+    h.erase(3);
+    
+    while (!h.empty()) {
+        std::cout << "-> " << h.extract_min() << std::endl;
+    }
     
     return 0;
 }

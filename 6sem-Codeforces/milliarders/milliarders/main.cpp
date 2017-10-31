@@ -1,6 +1,6 @@
 //
 //  main.cpp
-//  milliarders
+//  C task - milliarders
 //
 //  Created by Anton Karazeev on 19/08/2017.
 //  Copyright © 2017 Anton Karazeev. All rights reserved.
@@ -25,158 +25,299 @@ Khodorkovsky Chita 1
 20 Berezovsky Tbilisi
 21 Potanin StPetersburg
 22 Berezovsky London
- 
+
 out:
 Anadyr 5
 London 14
 Moscow 1
- 
+
 */
 
+#include <iostream>
+#include <algorithm>
+#include <vector>
 #include <string>
 #include <set>
 #include <map>
-#include <unordered_map>
-#include <iostream>
-#include <functional>
-#include <algorithm>
-#include <vector>
 
-const int maxn = 10000; // max number of milliarders
-const int maxk = 50000; // max number of registered movements
+template <typename T, typename COMP>
+class Heap {
+public:
+    Heap() {
+        
+    }
+    
+    Heap(std::vector<T> data) : data_(data) {
+        this->heapify();
+    }
+    
+    void heapify() {
+        for (int i = static_cast<int>(data_.size()) - 1; i >= 0; --i) {
+            sift_up(i);
+        }
+    }
+    
+    void insert(T value) {
+        data_.push_back(value);
+        sift_up(static_cast<int>(data_.size()) - 1);
+    }
+    
+    void sift_up(int index) {
+        while (COMP()(data_[index], data_[(index - 1) / 2])) {
+            std::swap(data_[index], data_[(index - 1) / 2]);
+            index = (index - 1) / 2;
+        }
+    }
+    
+    void sift_down(int index) {
+        while ((2 * index) + 1 < data_.size()) {
+            int index_left = 2 * index + 1;
+            int index_right = 2 * index + 2;
+            int index_tmp = index_left;
+            
+            if (index_right < data_.size() and COMP()(data_[index_right], data_[index_left])) {
+                index_tmp = index_right;
+            }
+            
+            if (COMP()(data_[index], data_[index_tmp])) {
+                return;
+            }
 
-struct City {
-    long long money;
-    int days; // Number of days being on the top
+            std::swap(data_[index], data_[index_tmp]);
+            index = index_tmp;
+        }
+    }
+    
+    T extract_min() {
+        T ans = data_[0];
+        data_[0] = data_[static_cast<int>(data_.size()) - 1];
+        data_.pop_back();
+        sift_down(0);
+        return ans;
+    }
+    
+    void erase(T val) {
+        for (auto iter = data_.begin(); iter != data_.end(); ++iter) {
+            if (*iter == val) {
+                data_.erase(iter);
+                break;
+            }
+        }
+        this->heapify();
+    }
+
+    std::vector<T> data_;
+};
+
+class Location {
+public:
     std::string name;
-} cities[maxn + maxk];
+    long long money;
+    int topdays;
+};
 
-struct Person {
+class Milliarder {
+public:
     std::string name;
     long long money;
-    City* location;
-} persons[maxn];
+    Location* location;
+};
 
 class cmp {
 public:
-    bool operator()(const std::pair<long long, City*>& left, const std::pair<long long, City*>& right) {
-        if (left.first == right.first) {
-            return left.second->name > right.second->name;
+    bool operator()(const Location* left, const Location* right) {
+        if (left->money == right->money) {
+            return left->name > right->name;
         } else {
-            return left.first > right.first;
+            return left->money > right->money;
         }
     }
 };
 
+class cmp2 {
+public:
+    bool operator()(const std::pair<int, int> left, const std::pair<int, int> right) {
+        return left.first > right.first;
+    }
+};
+
 int main() {
-    std::unordered_map<std::string, int> answer; // Cities and number of days being on the top
-    std::unordered_map<std::string, Person*> personMap; // Maps names into people
-    std::set<std::pair<long long, City*>, cmp> scoreBoard; // The cities ordered by money
-    std::map<std::string, City*> cityMap; // Maps names into cities
+    int max_mil = 10000; // max number of milliarders
+    int max_mov = 50000; // max number of registered movements
+    
+    std::vector<Milliarder> milliarders(max_mil); // all milliarders
+    std::vector<Location> locations(max_mil + max_mov); // all locations
+    
+    std::map<std::string, Milliarder*> milliarders_mapping; // milliarder_name -> milliarder
+    std::map<std::string, Location*> location_mapping; // location_name -> location
+//    std::set<Location*, cmp> answer; // pointer in order to increase first element when needed
+    Heap<Location*, cmp> answer_heap;
     
     int n; // number of names to read
     std::cin >> n;
     
-    int city_counter = 0;
-    
+    int loc_counter = 0; // counter of unique locations
+
     /* Read name, initial location and money */
     for (int i = 0; i < n; ++i) {
-        std::string name;
-        std::string location;
+        std::string milliarder_name;
+        std::string location_name;
         long long money;
         
-        std::cin >> name >> location >> money;
+        std::cin >> milliarder_name;
+        std::cin >> location_name;
+        std::cin >> money;
         
-        personMap[name] = &persons[i];
+        // link to i-th milliarder
+        milliarders_mapping[milliarder_name] = &milliarders[i];
         
-        if(!cityMap[location]) {
-            cityMap[location] = &cities[city_counter++];
+        // when new location is found
+        if (!location_mapping[location_name]) {
+            // link to loc_counter-th location
+            location_mapping[location_name] = &locations[loc_counter];
+            ++loc_counter;
         }
         
-        persons[i].location = cityMap[location];
-        persons[i].money = money;
-        cityMap[location]->name = location;
-        cityMap[location]->money += money;
+        milliarders[i].location = location_mapping[location_name];
+        milliarders[i].money = money;
+        location_mapping[location_name]->name = location_name;
+        location_mapping[location_name]->money += money;
     }
 
-    for (auto c : cityMap) {
-        // {money, city}
-        scoreBoard.insert({c.second->money, c.second});
+    /* Insert all cities from location_mapping to answer */
+    for (auto iter = location_mapping.begin(); iter != location_mapping.end(); ++iter) {
+        // iter = {money, location}
+//        answer.insert(iter->second);
+        answer_heap.insert(iter->second);
     }
-    
+
     int m; // total number of days with available data
     int k; // number of registered movements
-    
-    std::cin >> m >> k;
+    std::cin >> m;
+    std::cin >> k;
     
     int prevday = 0;
     int day = -1;
-    std::string name, place;
     
+    std::string milliarder_name;
+    std::string location_name;
+
     /* Read registered movements */
     for (int i = 0; i < k; ++i) {
-        std::cin >> day >> name >> place;
+        std::cin >> day;
+        std::cin >> milliarder_name;
+        std::cin >> location_name;
         
-        if(day != prevday) {
-            auto it2 = scoreBoard.begin();
-            auto it = it2;
-            ++it2;
-            if(it2 == scoreBoard.end() || it->first > it2->first) {
-                it->second->days += day - prevday;
-                
-                if (!answer[it->second->name]) {
-                    answer[it->second->name] = 1;
-                } else {
-                    answer[it->second->name] += day - prevday;
+        if (day != prevday) {
+//            std::set<Location*, cmp>::iterator it2 = answer.begin();
+//            std::set<Location*, cmp>::iterator it = it2;
+
+            auto it_heap = answer_heap.data_.begin();
+            auto it2_heap = it_heap;
+
+            ++it2_heap;
+            // check whether top element is the greatest
+            if (it2_heap != answer_heap.data_.end()) {
+                if ((*it2_heap)->money < (*std::next(it2_heap))->money) {
+                    ++it2_heap;
                 }
+            }
+
+//            ++it2;
+//             check whether top element is the greatest
+//            if (it2 == answer.end() or (*it)->money > (*it2)->money) {
+//                (*it)->topdays += day - prevday;
+//            }
+            if (it2_heap == answer_heap.data_.end() or (*it_heap)->money > (*it2_heap)->money) {
+                (*it_heap)->topdays += day - prevday;
             }
         }
 
-        if(!cityMap[place]) { // New city mentioned
-            cityMap[place] = &cities[city_counter++];
-            cityMap[place]->name = place;
+        // when new location is found
+        if (!location_mapping[location_name]) {
+            location_mapping[location_name] = &locations[loc_counter];
+            ++loc_counter;
+            location_mapping[location_name]->name = location_name;
         }
         
-        // Update the set and the city data structure itself
-        auto nextplace = cityMap[place];
-        auto person = personMap[name];
-        auto prevplace = person->location;
-        auto prevmoney = prevplace->money;
+        // get Milliarder corresponding to milliarder_name
+        Milliarder* milliarder = milliarders_mapping[milliarder_name];
         
-        scoreBoard.erase({prevmoney, prevplace});
-        prevplace->money -= person->money;
-        scoreBoard.insert({prevplace->money, prevplace});
+        // old location of milliarder
+        Location* oldloc = milliarder->location;
         
-        scoreBoard.erase({nextplace->money, nextplace});
-        nextplace->money += person->money;
-        scoreBoard.insert({nextplace->money, nextplace});
+        // get Location corresponding to location_name
+        // new location milliarder
+        Location* newloc = location_mapping[location_name];
         
-        person->location = nextplace;
+        /* Update elements in answer */
+        
+        // update old location
+//        answer.erase(oldloc);
+        answer_heap.erase(oldloc);
+        oldloc->money -= milliarder->money;
+//        answer.insert(oldloc);
+        answer_heap.insert(oldloc);
+        
+        // update new location
+//        answer.erase(newloc);
+        answer_heap.erase(newloc);
+        newloc->money += milliarder->money;
+//        answer.insert(newloc);
+        answer_heap.insert(newloc);
+        
+        // milliarder moved to new location
+        milliarder->location = newloc;
         prevday = day;
     }
     
     day = m;
-    if(day != prevday) {
-        auto it2 = scoreBoard.begin();
-        auto it = it2;
-        ++it2;
-        if(it2 == scoreBoard.end() || it->first > it2->first) {
-            it->second->days += day-prevday;
+    if (day != prevday) {
+//        std::set<Location*, cmp>::iterator it2 = answer.begin();
+//        std::set<Location*, cmp>::iterator it = it2;
+        
+        auto it_heap = answer_heap.data_.begin();
+        auto it2_heap = it_heap;
+        
+        ++it2_heap;
+        // check whether top element is the greatest
+        if (it2_heap != answer_heap.data_.end()) {
+            if ((*it2_heap)->money < (*std::next(it2_heap))->money) {
+                ++it2_heap;
+            }
+        }
+        
+//        ++it2;
+        // check whether top element is the greatest
+//        if (it2 == answer.end() or (*it)->money > (*it2)->money) {
+//            (*it)->topdays += day - prevday;
+//        }
+        if (it2_heap == answer_heap.data_.end() or (*it_heap)->money > (*it2_heap)->money) {
+            (*it_heap)->topdays += day - prevday;
         }
     }
     
     /* Build output vector */
     std::vector<std::pair<std::string, int> > output;
-    for(auto& r : scoreBoard) {
-        if(r.second->days) {
-            output.push_back({r.second->name, r.second->days});
+//    for (auto iter = answer.begin(); iter != answer.end(); ++iter) {
+//        // whether the location was at the top more than or equal to 1 time
+//        if ((*iter)->topdays >= 1) {
+//            output.push_back({(*iter)->name, (*iter)->topdays});
+//        }
+//    }
+    for (auto iter = answer_heap.data_.begin(); iter != answer_heap.data_.end(); ++iter) {
+        // whether the location was at the top more than or equal to 1 time
+        if ((*iter)->topdays >= 1) {
+            output.push_back({(*iter)->name, (*iter)->topdays});
         }
     }
     
+    /* Sort output vector */
     std::sort(output.begin(), output.end());
     
-    for(auto& o : output) {
-        std::cout << o.first << " " << o.second << std::endl;
+    /* Output */
+    for (int i = 0; i < output.size(); ++i) {
+        std::cout << output[i].first << ' ' << output[i].second << std::endl;
     }
     
     return 0;

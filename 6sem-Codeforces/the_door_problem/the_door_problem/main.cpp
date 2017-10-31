@@ -1,10 +1,46 @@
 //
 //  main.cpp
-//  the_door_problem
+//  L task - the_door_problem
 //
 //  Created by Anton Karazeev on 07/08/2017.
 //  Copyright © 2017 Anton Karazeev. All rights reserved.
 //
+
+/*
+ 
+in:
+3 3
+1 0 1
+2 1 3
+2 1 2
+2 2 3
+ 
+out:
+NO
+ 
+
+in:
+3 3
+1 0 1
+3 1 2 3
+1 2
+2 1 3
+ 
+out:
+YES
+ 
+ 
+in:
+3 3
+1 0 1
+3 1 2 3
+2 1 2
+1 3
+
+out:
+NO
+ 
+*/
 
 #include <iostream>
 #include <iomanip>
@@ -37,28 +73,34 @@ public:
     }
     
     /* Internal state */
-    int state;
-    int visit;
+    int state = 0;
+    int visit = 0;
     
     /* List of corresponding doors/switches */
     std::vector<Node*> list;
 };
 
-bool dfs(Node* c, int state, int visit) {
-    if (c->visit == visit) {
-        return c->state == state;
+bool dfs(Node* switch_node, int state, int visit) {
+    // whether c->state == state
+    if (switch_node->visit == visit) {
+        return switch_node->state == state;
     }
 
     /* Change visit and internal state */
-    c->visit = visit;
-    c->state = state;
+    switch_node->visit = visit;
+    switch_node->state = state;
 
-    for (auto d : c->list) {
-        for (auto s : d->list) {
-            if (not(s == c)) {
-                if (!dfs(s, c->state ^ d->state ^ 1, visit)) {
-                    return false;
-                }
+    // iterate over doors controlled by switch_node
+    for (int i = 0; i < switch_node->list.size(); ++i) {
+        // iterate over switches corresponding to door switch_node->list[i]
+        for (int j = 0; j < switch_node->list[i]->list.size(); ++j) {
+            // switch switch_node->list[i]->list[j] controls door switch_node->list[i]
+            // 2-SAT
+            if (not(switch_node->list[i]->list[j] == switch_node) and
+                !dfs(switch_node->list[i]->list[j],
+                     switch_node->state ^ switch_node->list[i]->state ^ 1, // xor operation
+                     visit)) {
+                return false;
             }
         }
     }
@@ -68,11 +110,9 @@ bool dfs(Node* c, int state, int visit) {
 int main() {
     int n; // number of doors
     int m; // number of switches
-    
     std::cin >> n;
     std::cin >> m;
-    
-    std::vector<Node> table(n + m);
+
     std::vector<Node> doors(n);
     std::vector<Node> switches(m);
     
@@ -85,7 +125,7 @@ int main() {
     for (int i = 0; i < m; ++i) {
         switches[i] = Node(-1);
     }
-    
+
     /* Read doors and switches */
     for (int i = 0; i < m; ++i) {
         int num_doors; // number of doors controlled by switch i
@@ -109,13 +149,13 @@ int main() {
         if (switches[i].visit == 0) {
             visit -= 1;
             if (!dfs(&switches[i], 0, visit)) {
-                std::cout << "NO";
+                std::cout << "NO" << std::endl;
                 return 0;
             }
         }
     }
     
-    std::cout << "YES";
+    std::cout << "YES" << std::endl;
 
     return 0;
 }
